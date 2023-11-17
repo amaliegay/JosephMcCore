@@ -1,0 +1,12 @@
+[package]
+name = "Mobile Phone"
+authors = ["JosephMcKean"]
+version = "1.0.0"
+
+[dependencies]
+assets = [
+    "MWSE/mods/JosephMcKean/mobilePhone",
+]
+
+[dependencies.mwse]
+buildnumber = 3251
