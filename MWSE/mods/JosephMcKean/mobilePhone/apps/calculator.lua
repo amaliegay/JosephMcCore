@@ -1,8 +1,11 @@
-local app = {
-  name = "Calculator"
-}
+local name = "Calculator"
 
-app.uiids = { appIcon = tes3ui.registerID("MenuMobilePhone_Calculator_icon") }
+local uiids = { appIcon = tes3ui.registerID("MenuMobilePhone_Calculator_icon") }
+
+---@param menu tes3uiElement
+local function createMenu(menu)
+
+end
 
 local num1
 local num2
@@ -16,4 +19,8 @@ end
 local plus
 plus:register("mouseClick", input)
 
-return app
+return {
+  name = name,
+  uiids = uiids,
+  launch = createMenu
+}
