@@ -1,4 +1,8 @@
+local app = {
+  name = "Calculator"
+}
 
+app.uiids = { appIcon = tes3ui.registerID("MenuMobilePhone_Calculator_icon") }
 
 local num1
 local num2
@@ -11,3 +15,5 @@ end
 
 local plus
 plus:register("mouseClick", input)
+
+return app
