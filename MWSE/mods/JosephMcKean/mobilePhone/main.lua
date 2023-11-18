@@ -12,10 +12,35 @@ local log = logging.new({ name = fileName, logLevel = config.logLevel })
 ---@class JosephMcKean.mobilePhone.uiids
 local uiids = { menu = tes3ui.registerID("MenuMobilePhone"), rect = tes3ui.registerID("MenuMobilePhone_rect") }
 
+---@return table<string, JosephMcKean.mobilePhone.app> apps
+local function loadApps()
+	local dir = "Data Files\\MWSE\\mods\\JosephMcKean\\mobilePhone\\apps"
+    local relative = "JosephMcKean.mobilePhone.apps."
+    ---@type table<string, JosephMcKean.mobilePhone.app>
+    local apps = {}
+    for file in lfs.dir(dir) do
+        if not file:startswith(".") and file:endswith(".lua") then
+            local app = file:sub(1, -4)
+            apps[app] = require(relative .. app)
+        end
+    end
+	return apps
+end
+
+---@param mainScreen tes3uiElement
+local function createAppsIcon(homeScreen)
+	local apps = loadApps()
+	for name, app in pairs(apps) do
+		local appIcon = homeScreen:createButton({ id = app.uiids.appIcon, text = app.name })
+	end
+end
+
 ---@param menu tes3uiElement
 local function createMainScreen(menu)
-	local rect = menu:createRect({ id = uiids.rect })
-	rect.width, rect.height = 322, 502
+	local homeScreen = menu:createRect({ id = uiids.homeScreen })
+	homeScreen.width, homeScreen.height = 322, 502
+
+	createAppsIcon(homeScreen)
 end
 
 ---@return tes3uiElement menu
