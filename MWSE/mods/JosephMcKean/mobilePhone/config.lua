@@ -1,5 +1,5 @@
 local defaults = {
-	mod = { name = "Mobile Phone" },
+	mod = { id = "mobilePhone", name = "Mobile Phone" },
 	logLevel = "INFO",
 	key = { keyCode = tes3.scanCode.p, isShiftDown = false, isControlDown = false, isAltDown = false },
 	homeScreen = { width = 322, height = 502 },

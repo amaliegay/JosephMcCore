@@ -1,7 +1,5 @@
 local config = require("JosephMcKean.mobilePhone.config")
-
-local logging = require("logging.logger")
-local log = logging.new({ name = config.mod.name, logLevel = config.logLevel })
+local log = require("JosephMcKean.lib.logging").createLogger(config, "main")
 
 ---@class mobilePhone.uiids
 local uiids = { menu = tes3ui.registerID("MenuMobilePhone"), homeScreen = tes3ui.registerID("MenuMobilePhone_homeScreen") }

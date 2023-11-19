@@ -1,51 +1,77 @@
-local name = "Calculator"
+local calculator = { name = "Calculator" }
 
 local config = require("JosephMcKean.mobilePhone.config")
-local log = require("JosephMcKean.mobilePhone.logging").createLogger("calculator") -- move logging to lib
+local log = require("JosephMcKean.lib.logging").createLogger(config, "calculator")
 
 local uiids = {
 	appIcon = tes3ui.registerID("MenuMobilePhone_Calculator_icon"),
 	mainRect = tes3ui.registerID("MenuMobilePhone_Calculator_mainRect"),
-	textInput = tes3ui.registerID("MenuMobilePhone_Calculator_textInput"),
+	mainBlock = tes3ui.registerID("MenuMobilePhone_Calculator_mainBlock"),
+	display = tes3ui.registerID("MenuMobilePhone_Calculator_display"),
 	numpad = tes3ui.registerID("MenuMobilePhone_Calculator_numpad"),
 	numpadLeft = tes3ui.registerID("MenuMobilePhone_Calculator_numpadLeft"),
 	numpadRight = tes3ui.registerID("MenuMobilePhone_Calculator_numpadRight"),
 }
 
+calculator.previous = ""
+calculator.current = ""
+calculator.operator = nil ---@type nil|fun(a: number, b: number):number
+calculator.operatorClicked = false
+
+local function updateDisplay() calculator.display.text = calculator.current == "" and 0 or calculator.current end
+
+local function clear() calculator.current = "" end
+local function sign() calculator.current = tostring(-tonumber(calculator.current)) end
+local function percent() calculator.current = tostring(tonumber(calculator.current) / 100) end
+---@param number string
+local function append(number) calculator.current = calculator.current .. number end
+local function dot() if not calculator.current:match("%.") then append(".") end end
+---@param fun fun(a: number, b: number):number
+local function operator(fun)
+	calculator.operator = fun
+	calculator.previous = calculator.current
+	calculator.operatorClicked = true
+end
+local function divide() operator(function(a, b) return a / b end) end
+local function times() operator(function(a, b) return a * b end) end
+local function minus() operator(function(a, b) return a - b end) end
+local function add() operator(function(a, b) return a + b end) end
+local function equal() end
+
+---@class mobilePhone.numpadButton.data
+---@field id string
+---@field widthProportional number?
+---@field click fun(key:string?)?
+
 local numpadButtons = {
+	---@type mobilePhone.numpadButton.data[][]
 	["left"] = {
-		[1] = { [1] = { id = "C" }, [2] = { id = "+/-" }, [3] = { id = "%" } },
-		[2] = { [1] = { id = "7" }, [2] = { id = "8" }, [3] = { id = "9" } },
-		[3] = { [1] = { id = "4" }, [2] = { id = "5" }, [3] = { id = "6" } },
-		[4] = { [1] = { id = "1" }, [2] = { id = "2" }, [3] = { id = "3" } },
-		[5] = { [1] = { id = "0", widthProportional = 1.37 }, [2] = { id = ".", widthProportional = 0.64 } },
+		[1] = { [1] = { id = "C", click = clear }, [2] = { id = "+/-", click = sign }, [3] = { id = "%", click = percent } },
+		[2] = { [1] = { id = "7", click = append }, [2] = { id = "8", click = append }, [3] = { id = "9", click = append } },
+		[3] = { [1] = { id = "4", click = append }, [2] = { id = "5", click = append }, [3] = { id = "6", click = append } },
+		[4] = { [1] = { id = "1", click = append }, [2] = { id = "2", click = append }, [3] = { id = "3", click = append } },
+		[5] = { [1] = { id = "0", click = append, widthProportional = 1.37 }, [2] = { id = ".", widthProportional = 0.64, click = dot } },
 	},
-	["right"] = { [1] = { id = "/" }, [2] = { id = "*" }, [3] = { id = "-" }, [4] = { id = "+" }, [5] = { id = "=" } },
+	---@type mobilePhone.numpadButton.data[]
+	["right"] = { [1] = { id = "/", click = divide }, [2] = { id = "x", click = times }, [3] = { id = "-", click = minus }, [4] = { id = "+", click = add }, [5] = { id = "=", click = equal } },
 }
 
 ---@param numpad tes3uiElement
----@param id string
-local function createButton(numpad, id, widthProportional)
-	local button = numpad:createButton({ id = tes3ui.registerID("MenuMobilePhone_Calculator_numpad" .. id), text = id })
-	button.widthProportional = widthProportional or 1
+---@param data mobilePhone.numpadButton.data
+local function createButton(numpad, data)
+	local button = numpad:createButton({ id = tes3ui.registerID("MenuMobilePhone_Calculator_numpad" .. data.id), text = data.id })
+	button.height = 72
+	button.widthProportional = data.widthProportional or 1
 	button.autoHeight = false
+	button:register("mouseClick", function(e)
+		if data.click then data.click(data.id) end
+		updateDisplay()
+	end)
 end
 
----@param numpad tes3uiElement
-local function updateButtonHeight(numpad)
-	local height
-	for uiElement in table.traverse(numpad.children) do
-		if uiElement.type == tes3.uiElementType.button then
-			if not height and (uiElement.widthProportional == 1) then height = uiElement.width end
-			uiElement.height = height
-			log:trace("updating %s button height: %d", uiElement.text, uiElement.height)
-		end
-	end
-end
-
----@param mainRect tes3uiElement
-local function createNumpad(mainRect)
-	local numpad = mainRect:createBlock({ id = uiids.numpad })
+---@param mainBlock tes3uiElement
+local function createNumpad(mainBlock)
+	local numpad = mainBlock:createBlock({ id = uiids.numpad })
 	numpad.autoHeight = true
 	numpad.widthProportional = 1
 	numpad.borderTop = 10
@@ -59,43 +85,42 @@ local function createNumpad(mainRect)
 		rowBlock.widthProportional = 1
 		rowBlock.autoHeight = true
 		rowBlock.flowDirection = tes3.flowDirection.leftToRight
-		for j, data in ipairs(row) do createButton(rowBlock, data.id, data.widthProportional) end
+		for j, data in ipairs(row) do createButton(rowBlock, data) end
 	end
 	local numpadRight = numpad:createBlock({ id = uiids.numpadRight })
 	numpadRight.widthProportional = 0.5
 	numpadRight.autoHeight = true
 	numpadRight.flowDirection = tes3.flowDirection.topToBottom
-	for i, data in ipairs(numpadButtons["right"]) do createButton(numpadRight, data.id) end
-	updateButtonHeight(numpad)
+	for i, data in ipairs(numpadButtons["right"]) do createButton(numpadRight, data) end
 end
 
----@param mainRect tes3uiElement
-local function createTextInput(mainRect)
-	local textInput = mainRect:createTextInput({ id = uiids.textInput, text = "0", placeholderText = "0", numeric = true, autoFocus = true })
-	textInput.borderTop, textInput.borderRight = 20, 10
-	textInput.widthProportional = 1
-	textInput.wrapText = true
-	textInput.justifyText = "right"
-	textInput.font = 1
+---@param mainBlock tes3uiElement
+local function createDisplay(mainBlock)
+	local display = mainBlock:createLabel({ id = uiids.display, text = "0" })
+	display.borderTop, display.borderRight = 20, 10
+	display.widthProportional = 1
+	display.wrapText = true
+	display.justifyText = "right"
+	display.font = 1
+	calculator.display = display
 end
+
+event.register("keyDown", function() updateDisplay() end)
 
 ---@param menu tes3uiElement
 local function createMenu(menu)
 	local mainRect = menu:createRect({ id = uiids.mainRect })
 	mainRect.width, mainRect.height = config.homeScreen.width, config.homeScreen.height
-	mainRect.flowDirection = tes3.flowDirection.topToBottom
-	createTextInput(mainRect)
-	createNumpad(mainRect)
+	local mainBlock = mainRect:createBlock({ id = uiids.mainBlock })
+	mainBlock.absolutePosAlignY = 1
+	mainBlock.width = mainRect.width
+	mainBlock.autoHeight = true
+	mainBlock.flowDirection = tes3.flowDirection.topToBottom
+	createDisplay(mainBlock)
+	createNumpad(mainBlock)
 end
 
-local num1 = 0
-local num2 = 0
-local result = num1 + num2
+calculator.uiids = uiids
+calculator.launch = createMenu
 
----@param e tes3uiEventData
-local function input(e) num1 = tonumber(tes3ui.acquireTextInput(e.source)) or 0 end
-
-local plus
--- plus:register("mouseClick", input)
-
-return { name = name, uiids = uiids, launch = createMenu }
+return calculator

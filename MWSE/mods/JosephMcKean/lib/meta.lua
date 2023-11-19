@@ -1,0 +1,8 @@
+---@class JosephMcKean.lib.mod
+---@field name string
+--
+---@class JosephMcKean.lib.keybind
+---@field keyCode integer
+---@field isShiftDown boolean
+---@field isAltDown boolean
+---@field isControlDown boolean
