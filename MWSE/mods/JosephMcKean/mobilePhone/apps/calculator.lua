@@ -20,11 +20,17 @@ calculator.operatorClicked = false
 
 local function updateDisplay() calculator.display.text = calculator.current == "" and 0 or calculator.current end
 
-local function clear() calculator.current = "" end
+local function clear() 
+	calculator.current = "" 
+	calculator.operatorClicked = false 
+end
 local function sign() calculator.current = tostring(-tonumber(calculator.current)) end
 local function percent() calculator.current = tostring(tonumber(calculator.current) / 100) end
 ---@param number string
-local function append(number) calculator.current = calculator.current .. number end
+local function append(number) 
+	if calculator.operatorClicked then clear() end
+	calculator.current = calculator.current .. number 
+end
 local function dot() if not calculator.current:match("%.") then append(".") end end
 ---@param fun fun(a: number, b: number):number
 local function operator(fun)
@@ -36,7 +42,10 @@ local function divide() operator(function(a, b) return a / b end) end
 local function times() operator(function(a, b) return a * b end) end
 local function minus() operator(function(a, b) return a - b end) end
 local function add() operator(function(a, b) return a + b end) end
-local function equal() end
+local function equal() 
+	calculator.current = calculator.operator(tonumber(calculator.previous), tonumber(calculator.current)) 
+	calculator.previous = ""
+end
 
 ---@class mobilePhone.numpadButton.data
 ---@field id string
