@@ -22,6 +22,7 @@ local function updateDisplay() calculator.display.text = calculator.current == "
 
 local function clear() 
 	calculator.current = "" 
+	calculator.operator = nil
 	calculator.operatorClicked = false 
 end
 local function sign() calculator.current = tostring(-tonumber(calculator.current)) end
@@ -30,6 +31,9 @@ local function percent() calculator.current = tostring(tonumber(calculator.curre
 local function append(number) 
 	if calculator.operatorClicked then clear() end
 	calculator.current = calculator.current .. number 
+end
+local function zero()
+	if calculator.current ~= "0" then append("0") end
 end
 local function dot() if not calculator.current:match("%.") then append(".") end end
 ---@param fun fun(a: number, b: number):number
@@ -59,7 +63,7 @@ local numpadButtons = {
 		[2] = { [1] = { id = "7", click = append }, [2] = { id = "8", click = append }, [3] = { id = "9", click = append } },
 		[3] = { [1] = { id = "4", click = append }, [2] = { id = "5", click = append }, [3] = { id = "6", click = append } },
 		[4] = { [1] = { id = "1", click = append }, [2] = { id = "2", click = append }, [3] = { id = "3", click = append } },
-		[5] = { [1] = { id = "0", click = append, widthProportional = 1.37 }, [2] = { id = ".", widthProportional = 0.64, click = dot } },
+		[5] = { [1] = { id = "0", click = zero, widthProportional = 1.37 }, [2] = { id = ".", widthProportional = 0.64, click = dot } },
 	},
 	---@type mobilePhone.numpadButton.data[]
 	["right"] = { [1] = { id = "/", click = divide }, [2] = { id = "x", click = times }, [3] = { id = "-", click = minus }, [4] = { id = "+", click = add }, [5] = { id = "=", click = equal } },
