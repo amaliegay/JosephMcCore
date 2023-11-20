@@ -61,7 +61,7 @@ event.register("initialized", function()
 	event.register("keyDown", 
 			---@param e keyDownEventData
 			function(e) 
-				ui.keyDownUIToggle(e, createMenu) 
+				ui.keyDownUIToggle(e, config.key, uiids.menu, createMenu) 
 			end)
 	log:info("Initialized!")
 end)
