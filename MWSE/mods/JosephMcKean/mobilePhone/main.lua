@@ -1,5 +1,6 @@
 local config = require("JosephMcKean.mobilePhone.config")
 local log = require("JosephMcKean.lib.logging").createLogger(config, "main")
+local ui = require("JosephMcKean.lib.ui")
 
 ---@class mobilePhone.uiids
 local uiids = { menu = tes3ui.registerID("MenuMobilePhone"), homeScreen = tes3ui.registerID("MenuMobilePhone_homeScreen") }
@@ -56,19 +57,12 @@ local function createMenu()
 	return menu
 end
 
----@param e keyDownEventData
-local function keyDown(e)
-	if not tes3.isKeyEqual({ actual = e, expected = config.key }) then return end
-	local menu = tes3ui.findMenu(uiids.menu)
-	if menu then
-		menu.visible = not menu.visible
-	else
-		menu = createMenu()
-	end
-end
-
 event.register("initialized", function()
-	event.register("keyDown", keyDown)
+	event.register("keyDown", 
+			---@param e keyDownEventData
+			function(e) 
+				ui.keyDownUIToggle(e, createMenu) 
+			end)
 	log:info("Initialized!")
 end)
 
