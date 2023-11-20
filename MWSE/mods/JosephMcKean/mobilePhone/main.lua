@@ -58,11 +58,7 @@ local function createMenu()
 end
 
 event.register("initialized", function()
-	event.register("keyDown", 
-			---@param e keyDownEventData
-			function(e) 
-				ui.keyDownUIToggle(e, config.key, uiids.menu, createMenu) 
-			end)
+	event.register("keyDown", function(e) ui.keyDownUIToggle(e, config.key, uiids.menu, createMenu) end)
 	log:info("Initialized!")
 end)
 

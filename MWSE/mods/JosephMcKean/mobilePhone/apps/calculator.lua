@@ -20,35 +20,52 @@ calculator.operatorClicked = false
 
 local function updateDisplay() calculator.display.text = calculator.current == "" and 0 or calculator.current end
 
-local function clear() 
-	calculator.current = "" 
+local function clear()
+	calculator.current = "0"
 	calculator.operator = nil
-	calculator.operatorClicked = false 
+	calculator.operatorClicked = false
 end
-local function sign() calculator.current = tostring(-tonumber(calculator.current)) end
+local function sign()
+	log:trace("sign(%s)", calculator.current)
+	if calculator.current ~= "0" then calculator.current = tostring(-tonumber(calculator.current)) end
+end
 local function percent() calculator.current = tostring(tonumber(calculator.current) / 100) end
 ---@param number string
-local function append(number) 
-	if calculator.operatorClicked then clear() end
-	calculator.current = calculator.current .. number 
+local function append(number)
+	log:trace("append(%s)", number)
+	if calculator.operatorClicked then calculator.current = "" end
+	calculator.current = calculator.current .. number
 end
-local function zero()
-	if calculator.current ~= "0" then append("0") end
-end
+local function zero() if calculator.current ~= "0" then append("0") end end
 local function dot() if not calculator.current:match("%.") then append(".") end end
----@param fun fun(a: number, b: number):number
-local function operator(fun)
-	calculator.operator = fun
+local function setOperator()
 	calculator.previous = calculator.current
 	calculator.operatorClicked = true
 end
-local function divide() operator(function(a, b) return a / b end) end
-local function times() operator(function(a, b) return a * b end) end
-local function minus() operator(function(a, b) return a - b end) end
-local function add() operator(function(a, b) return a + b end) end
-local function equal() 
-	calculator.current = calculator.operator(tonumber(calculator.previous), tonumber(calculator.current)) 
+local function divide()
+	calculator.operator = function(a, b) return a / b end
+	log:trace("divide")
+	setOperator()
+end
+local function times()
+	calculator.operator = function(a, b) return a * b end
+	log:trace("times")
+	setOperator()
+end
+local function minus()
+	calculator.operator = function(a, b) return a - b end
+	log:trace("minus")
+	setOperator()
+end
+local function add()
+	calculator.operator = function(a, b) return a + b end
+	log:trace("add")
+	setOperator()
+end
+local function equal()
+	calculator.current = tostring(calculator.operator(tonumber(calculator.previous), tonumber(calculator.current)))
 	calculator.previous = ""
+	log:trace("equal")
 end
 
 ---@class mobilePhone.numpadButton.data
