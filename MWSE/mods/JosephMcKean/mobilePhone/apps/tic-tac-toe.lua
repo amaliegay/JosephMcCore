@@ -1,15 +1,15 @@
-local tic-tac-toc = { name = "Tic-tac-toc" }
+local tic-tac-toe = { name = "Tic-tac-toe" }
 
 local config = require("JosephMcKean.mobilePhone.config")
-local log = require("JosephMcKean.lib.logging").createLogger(config, "tic-tac-toc")
+local log = require("JosephMcKean.lib.logging").createLogger(config, "tic-tac-toe")
 
 local uiids = {
-	appIcon = tes3ui.registerID("MenuMobilePhone_TicTacToc_icon"),
-	mainRect = tes3ui.registerID("MenuMobilePhone_TicTacToc_mainRect"),
-	mainBlock = tes3ui.registerID("MenuMobilePhone_TicTacToc_mainBlock")
+	appIcon = tes3ui.registerID("MenuMobilePhone_TicTacToe_icon"),
+	mainRect = tes3ui.registerID("MenuMobilePhone_TicTacToe_mainRect"),
+	mainBlock = tes3ui.registerID("MenuMobilePhone_TicTacToe_mainBlock")
 }
 
-tic-tac-toc.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.dds" }
+tic-tac-toe.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.dds" }
 
 local function createButton()
 	
@@ -26,7 +26,7 @@ local function createMenu(menu)
 	mainBlock.flowDirection = tes3.flowDirection.topToBottom
 end
 
-tic-tac-toc.uiids = uiids
-tic-tac-toc.launch = createMenu
+tic-tac-toe.uiids = uiids
+tic-tac-toe.launch = createMenu
 
-return tic-tac-toc
+return tic-tac-toe
