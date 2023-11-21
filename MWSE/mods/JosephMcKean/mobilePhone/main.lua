@@ -29,7 +29,7 @@ end
 local function createAppsIcon(homeScreen)
 	local apps = loadApps()
 	for name, app in pairs(apps) do
-		local appIcon = homeScreen:createButton({ id = app.uiids.appIcon, text = app.name })
+		local appIcon = homeScreen:createImage({ id = app.icon.uiid, path = app.icon.path })
 		appIcon:register("mouseClick", function(e)
 			homeScreen.visible = false
 			app.launch(homeScreen.parent)
