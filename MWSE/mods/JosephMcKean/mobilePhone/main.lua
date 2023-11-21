@@ -39,11 +39,21 @@ local function createAppsIcon(homeScreen)
 end
 
 ---@param menu tes3uiElement
-local function createMainScreen(menu)
-	local homeScreen = menu:createRect({ id = uiids.homeScreen })
-	homeScreen.width, homeScreen.height = config.homeScreen.width, config.homeScreen.height
-
-	createAppsIcon(homeScreen)
+local function createDevice(menu)
+	local device = menu:createBlock({ id = uiids.device })
+	--- screen
+	local screen = device:createThinBorder({ id = uiids.screen })
+	local frontCamera = screen:createThinBorder({ id = uiids.frontCamera })
+	local earpieceSpeaker = screen:createThinBorder({ id = uiids.earpieceSpeaker })
+	local display = screen:createThinBorder({ id = uiids.display })
+	display.width, display.height = config.display.width, config.display.height
+	createAppsIcon(display)
+	local homeButton = screen:createButton({ id = uiids.homeButton })
+	--- device buttons
+	local silentSwitch = device:createThinBorder({ id = uiids.silentSwitch })
+	local volumeUpButton = device:createThinBorder({ id = uiids.volumeUpButton })
+	local volumeDownButton = device:createThinBorder({ id = uiids.volumeDownButton })
+	local sideButton = device:createButton({ id = uiids.sideButton })
 end
 
 ---@return tes3uiElement menu
@@ -53,7 +63,7 @@ local function createMenu()
 	menu.absolutePosAlignX, menu.absolutePosAlignY = 0.98, 1
 	menu:loadMenuPosition()
 
-	createMainScreen(menu)
+	createDevice(menu)
 	return menu
 end
 
