@@ -3,12 +3,30 @@ local log = require("JosephMcKean.lib.logging").createLogger(config, "main")
 local ui = require("JosephMcKean.lib.ui")
 
 ---@class mobilePhone.uiids
-local uiids = { menu = tes3ui.registerID("MenuMobilePhone"), homeScreen = tes3ui.registerID("MenuMobilePhone_homeScreen") }
+local uiids = {
+	menu = tes3ui.registerID("MenuMobilePhone"),
+	device = tes3ui.registerID("MenuMobilePhone_device"),
+	screen = tes3ui.registerID("MenuMobilePhone_screen"),
+	homeScreen = tes3ui.registerID("MenuMobilePhone_homeScreen"),
+	frontCamera = tes3ui.registerID("MenuMobilePhone_frontCamera"),
+	earpieceSpeaker = tes3ui.registerID("MenuMobilePhone_earpieceSpeaker"),
+	display = tes3ui.registerID("MenuMobilePhone_display"),
+	homeButton = tes3ui.registerID("MenuMobilePhone_homeButton"),
+	silentSwitch = tes3ui.registerID("MenuMobilePhone_silentSwitch"),
+	volumeUpButton = tes3ui.registerID("MenuMobilePhone_volumeUpButton"),
+	volumeDownButton = tes3ui.registerID("MenuMobilePhone_volumeDownButton"),
+	sideButton = tes3ui.registerID("MenuMobilePhone_sideButton"),
+}
 
 ---@class mobilePhone.app
 ---@field name string
 ---@field uiids table
 ---@field launch fun(menu:tes3uiElement)
+---@field icon mobilePhone.app.icon
+
+---@class mobilePhone.app.icon
+---@field uiid integer
+---@field path string
 
 ---@return table<string, mobilePhone.app> apps
 local function loadApps()
@@ -30,6 +48,7 @@ local function createAppsIcon(homeScreen)
 	local apps = loadApps()
 	for name, app in pairs(apps) do
 		local appIcon = homeScreen:createImage({ id = app.icon.uiid, path = app.icon.path })
+		appIcon.borderAllSides = 10
 		appIcon:register("mouseClick", function(e)
 			homeScreen.visible = false
 			app.launch(homeScreen.parent)
@@ -40,20 +59,33 @@ end
 
 ---@param menu tes3uiElement
 local function createDevice(menu)
-	local device = menu:createBlock({ id = uiids.device })
+	local device = menu:createThinBorder({ id = uiids.device })
+	device.parent.paddingAllSides = 5
+	device.autoWidth, device.autoHeight = true, true
 	--- screen
-	local screen = device:createThinBorder({ id = uiids.screen })
+	local screen = device:createRect({ id = uiids.screen, color = tes3vector3.new(0, 0, 0) })
+	screen.width, screen.height = config.screen.width, config.screen.height
 	local frontCamera = screen:createThinBorder({ id = uiids.frontCamera })
+	frontCamera.width, frontCamera.height = 8, 8
+	frontCamera.absolutePosAlignX, frontCamera.absolutePosAlignY = 0.38, 0.05
 	local earpieceSpeaker = screen:createThinBorder({ id = uiids.earpieceSpeaker })
+	earpieceSpeaker.width, earpieceSpeaker.height = 50, 8
+	earpieceSpeaker.absolutePosAlignX, earpieceSpeaker.absolutePosAlignY = 0.55, 0.05
 	local display = screen:createThinBorder({ id = uiids.display })
 	display.width, display.height = config.display.width, config.display.height
+	display.absolutePosAlignX, display.absolutePosAlignY = 0.5, 0.55
 	createAppsIcon(display)
 	local homeButton = screen:createButton({ id = uiids.homeButton })
-	--- device buttons
+	homeButton.absolutePosAlignX, homeButton.absolutePosAlignY = 0.5, 0.99
+	homeButton.autoWidth, homeButton.autoHeight = false, false
+	homeButton.width, homeButton.height = 36, 36
+	--[[ device buttons
 	local silentSwitch = device:createThinBorder({ id = uiids.silentSwitch })
 	local volumeUpButton = device:createThinBorder({ id = uiids.volumeUpButton })
 	local volumeDownButton = device:createThinBorder({ id = uiids.volumeDownButton })
 	local sideButton = device:createButton({ id = uiids.sideButton })
+	sideButton.autoWidth, sideButton.autoHeight = false, false
+	sideButton.width, sideButton.height = 8, 40]]
 end
 
 ---@return tes3uiElement menu

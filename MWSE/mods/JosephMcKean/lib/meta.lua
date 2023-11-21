@@ -6,3 +6,7 @@
 ---@field isShiftDown boolean
 ---@field isAltDown boolean
 ---@field isControlDown boolean
+--
+---@class JosephMcKean.lib.size
+---@field width integer
+---@field height integer

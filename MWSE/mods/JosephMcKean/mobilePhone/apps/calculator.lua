@@ -20,7 +20,7 @@ calculator.current = ""
 calculator.operator = nil ---@type nil|fun(a: number, b: number):number
 calculator.operatorClicked = false
 
-local function updateDisplay() calculator.display.text = calculator.current == "" and 0 or calculator.current end
+local function updateDisplay() if calculator.display then calculator.display.text = calculator.current == "" and 0 or calculator.current end end
 
 local function clear()
 	calculator.current = "0"
@@ -135,14 +135,13 @@ local function createDisplay(mainBlock)
 	display.justifyText = "right"
 	display.font = 1
 	calculator.display = display
+	event.register("keyDown", function() updateDisplay() end)
 end
-
-event.register("keyDown", function() updateDisplay() end)
 
 ---@param menu tes3uiElement
 local function createMenu(menu)
 	local mainRect = menu:createRect({ id = uiids.mainRect })
-	mainRect.width, mainRect.height = config.homeScreen.width, config.homeScreen.height
+	mainRect.width, mainRect.height = config.display.width, config.display.height
 	local mainBlock = mainRect:createBlock({ id = uiids.mainBlock })
 	mainBlock.absolutePosAlignY = 1
 	mainBlock.width = mainRect.width
