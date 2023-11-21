@@ -1,2 +1,1 @@
-- create calculator app icon
 - create tic tac toc
