@@ -1,4 +1,2 @@
-- press p key to open and close the phone menu
-- create main screen block
-- create calculator app button
-- destroy main screen block and create calculator screen block
+- create calculator app icon
+- create tic tac toc
