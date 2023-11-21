@@ -13,6 +13,8 @@ local uiids = {
 	numpadRight = tes3ui.registerID("MenuMobilePhone_Calculator_numpadRight"),
 }
 
+calculator.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\c\\icon.dds" }
+
 calculator.previous = ""
 calculator.current = ""
 calculator.operator = nil ---@type nil|fun(a: number, b: number):number
