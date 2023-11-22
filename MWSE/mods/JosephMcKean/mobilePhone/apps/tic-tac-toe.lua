@@ -16,13 +16,28 @@ tictactoe.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.d
 
 local function createButton() end
 
+local function createGameBoard(mainRect)
+	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
+	gameBoard.flowDirection = tes3.flowDirection.topToBottom
+	for i = 1, 3 do
+		local row = gameBoard:createBlock({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard"..i)})
+		row.flowDirection = tes3.flowDirection.leftToRight
+		for j = 1, 3 do
+			local gameBoardTile = row:createButton({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard"..i..j )}
+			gameBoardTile.borderAllSides = 10
+		end
+	end
+end
+
 ---@param menu tes3uiElement
 local function createMenu(menu)
 	local mainRect = menu:createRect({ id = uiids.mainRect })
 	mainRect.width, mainRect.height = config.display.width, config.display.height
 	local title = mainRect:createLabel({ id = uiids.title, text = "Tic Tac Toe" })
+	title.justifyText = "center"
 	local statusDisplay = mainRect:createLabel({ id = uiids.statusDisplay, text = "It's X's turn." })
-	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
+	statusDisplay.justifyText = "center"
+	createGameBoard(mainRect)
 	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
 end
 
