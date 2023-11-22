@@ -19,6 +19,13 @@ tictactoe.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.d
 ---|'"O"'
 tictactoe.currentUser = "X"
 
+---@param e tes3uiEventData
+local function markTile(e)
+	if e.source.text ~= "" return end
+	e.source.text = tictactoe.currentUser 
+	tictactoe.currentUser = tictactoe.currentUser == "X" and "O" or "X"
+end
+
 local function createGameBoard(mainRect)
 	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
 	gameBoard.flowDirection = tes3.flowDirection.topToBottom
@@ -28,6 +35,8 @@ local function createGameBoard(mainRect)
 		for j = 1, 3 do
 			local gameBoardTile = row:createButton({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard"..i..j )}
 			gameBoardTile.borderAllSides = 10
+			gameBoardTile:register("mouseClick", markTile)
+			gameBoardTile:register("mouseClick", checkStatus)		
 		end
 	end
 end
@@ -44,12 +53,7 @@ local function createMenu(menu)
 	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
 end
 
-local function setup()
-	createMenu()
-
-end
-
 tictactoe.uiids = uiids
-tictactoe.launch = setup
+tictactoe.launch = createMenu
 
 return tictactoe
