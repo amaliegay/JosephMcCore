@@ -14,7 +14,10 @@ local uiids = {
 
 tictactoe.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.dds" }
 
-local function createButton() end
+---@alias mobilePhone.tictactoe.currentUser
+---|'"X"'
+---|'"O"'
+tictactoe.currentUser = "X"
 
 local function createGameBoard(mainRect)
 	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
@@ -41,7 +44,12 @@ local function createMenu(menu)
 	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
 end
 
+local function setup()
+	createMenu()
+
+end
+
 tictactoe.uiids = uiids
-tictactoe.launch = createMenu
+tictactoe.launch = setup
 
 return tictactoe
