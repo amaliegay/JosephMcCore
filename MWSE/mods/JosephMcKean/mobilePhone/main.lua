@@ -17,6 +17,7 @@ local uiids = {
 	volumeDownButton = tes3ui.registerID("MenuMobilePhone_volumeDownButton"),
 	sideButton = tes3ui.registerID("MenuMobilePhone_sideButton"),
 	statusBar = tes3ui.registerID("MenuMobilePhone_statusBar"),
+	clockLabel = tes3ui.registerID("MenuMobilePhone_clockLabel"),
 }
 
 ---@class mobilePhone.app
@@ -60,53 +61,13 @@ end
 
 ---@param statusBar tes3uiElement
 local function createClock(statusBar)
-    local menuMapBlock  = e.element:findChild(tes3ui.registerID("MenuMap_panel"))
-    local startingBlock = menuMapBlock.parent
-
-    startingBlock.flowDirection = "top_to_bottom"
-    startingBlock.alpha         = tes3.worldController.menuAlpha
-
-    -- Clock Blocks --
-
-    clocksBlock.e = startingBlock:findChild(clocksBlockID)
-    if clocksBlock.e then
-        clocksBlock.e:destroy()
-    end
-
-    clocksBlock.e = startingBlock:createThinBorder{ id = clocksBlock.ID }
-
-    clocksBlock.e.autoHeight        = true
-    clocksBlock.e.autoWidth         = true
-    clocksBlock.e.widthProportional = 1
-    clocksBlock.e.flowDirection     = "top_to_bottom"
-
-    clocksBlock.relativePosition = relativePositions.below
-    setRelativePositionClockUI(config.clocksRelativePosition)
-
-    for _, clockID in ipairs{ "gameClock", "realClock" } do
-        local clock = clocksTable[clockID]
-
-        local block = clocksBlock.e:createThinBorder{ id = clock.blockID }
-
-        block.flowDirection = "left_to_right"
-        block.height        = 20
-        block.width         = 65
-        block.visible       = clock.isVisible()
-        
-        block:register("help", function(e)
-            local tooltip = tes3ui.createTooltipMenu()
-            tooltip:createLabel{ text = clock.name }
-        end)
-
-        local label = block:createLabel{ id = clock.labelID }
-
-        label.absolutePosAlignX = 0.5
-        label.color             = clock.color
-
-        updateClockUI(clock)
-    end
-
-    startingBlock:getTopLevelMenu():updateLayout()
+	local clock
+    local clockLabel = statusBar:createLabel({ id = uiids.clockLabel })
+    clockLabel.autoWidth, clocksBlock.autoHeight = true, true
+    clockLabel.widthProportional = 1
+	clockLabel.absolutePosAlignX = 0.5
+    clockLabel.color = clock.color
+	updateClockUI(clock)
 end
 
 ---@param display tes3uiElement
