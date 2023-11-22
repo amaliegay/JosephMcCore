@@ -61,43 +61,26 @@ end
 
 local function getTime()
     local timestamp = tes3.getSimulationTimestamp() * 3600
-    local twentyHourHourTime = config.clock.twentyHourHourTime
-	local localTimePrefix = "!"
-
-    if twentyHourHourTime then
-        return os.date(localTimePrefix .. "%H:%M", timestamp)
+    if config.clock.twentyHourHourTime then
+        return os.date("!%H:%M", timestamp)
     else
-        local dateTable = os.date(localTimePrefix .. "*t", timestamp)
-
-        if dateTable.min == 0 then
-
-            if dateTable.hour == 0 then
-                return "Midnight"
-            end
-
-            if dateTable.hour == 12 then
-                return "Noon"
-            end
-
-        end
-
+        local dateTable = os.date("!*t", timestamp)
         local hourInTwelveHour = dateTable.hour
-        if hourInTwelveHour == 0 then
-            hourInTwelveHour = 12
-        elseif hourInTwelveHour > 12 then
+        if hourInTwelveHour > 12 then
             hourInTwelveHour = hourInTwelveHour - 12
         end
 
-        local dayPeriod
-        if dateTable.hour < 12 then
-            dayPeriod = "AM"
-        else
-            dayPeriod = "PM"
-        end
+        local dayPeriod = ""
+		if config.clock.dayPeriod then
+        	if dateTable.hour < 12 then
+            	dayPeriod = " AM"
+        	else
+            	dayPeriod = " PM"
+        	end
+		end
 
         return string.format("%u:%02u %s", hourInTwelveHour, dateTable.min, dayPeriod)
     end
-end
 end
 
 ---@param clockLabel tes3uiElement
