@@ -1,4 +1,4 @@
-local tictactoe = { name = "Tic-tac-toe" }
+local tictactoe = { name = "Tic Tac Toe" }
 
 local config = require("JosephMcKean.mobilePhone.config")
 local log = require("JosephMcKean.lib.logging").createLogger(config, "tictactoe")
