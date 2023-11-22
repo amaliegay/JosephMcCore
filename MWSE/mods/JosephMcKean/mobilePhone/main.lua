@@ -78,7 +78,6 @@ local function getTime()
             	dayPeriod = " PM"
         	end
 		end
-
         return string.format("%u:%02u %s", hourInTwelveHour, dateTable.min, dayPeriod)
     end
 end
@@ -90,6 +89,37 @@ local function updateClockUI(clockLabel)
     end
 end
 
+local function startClockTimers()
+    for _, clock in pairs(clocksTable) do
+        if clock.timer and timer.state ~= timer.expired then
+            clock.timer:cancel()
+        end
+    end
+
+    clocksTable.gameClock.timer = timer.start{
+        type     = timer.game,
+        duration = 1.0 / 60.0,
+        callback = function()
+                updateClockUI(clocksTable.gameClock)
+            end,
+        iterations = -1
+    }
+
+    clocksTable.realClock.timer = timer.start{
+        type     = timer.real,
+        duration = 60,
+        callback = function()
+                updateClockUI(clocksTable.realClock)
+            end,
+        iterations = -1
+    }
+
+    for _, clock in pairs(clocksTable) do
+        if not clock.isVisible() then
+            clock.timer:pause()
+        end
+    end
+end
 
 ---@param statusBar tes3uiElement
 local function createClock(statusBar)
@@ -99,6 +129,7 @@ local function createClock(statusBar)
 	clockLabel.absolutePosAlignX = 0.5
     clockLabel.color = config.clock.color
 	updateClockUI(clockLabel)
+	event.register("loaded", startClockTimers)
 end
 
 ---@param display tes3uiElement
