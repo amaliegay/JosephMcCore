@@ -6,7 +6,10 @@ local log = require("JosephMcKean.lib.logging").createLogger(config, "tictactoe"
 local uiids = {
 	appIcon = tes3ui.registerID("MenuMobilePhone_TicTacToe_icon"),
 	mainRect = tes3ui.registerID("MenuMobilePhone_TicTacToe_mainRect"),
+	title = tes3ui.registerID("MenuMobilePhone_TicTacToe_title"),
+	statusDisplay = tes3ui.registerID("MenuMobilePhone_TicTacToe_statusDisplay"),
 	gameBoard = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard"),
+	resetButton = tes3ui.registerID("MenuMobilePhone_TicTacToe_resetButton"),
 }
 
 tictactoe.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.dds" }
@@ -20,6 +23,7 @@ local function createMenu(menu)
 	local title = mainRect:createLabel({ id = uiids.title, text = "Tic Tac Toe" })
 	local statusDisplay = mainRect:createLabel({ id = uiids.statusDisplay, text = "It's X's turn." })
 	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
+	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
 end
 
 tictactoe.uiids = uiids
