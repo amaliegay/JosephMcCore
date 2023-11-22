@@ -27,4 +27,4 @@ end
 draw.uiids = uiids
 draw.launch = createMenu
 
-return tictactoe
+return draw

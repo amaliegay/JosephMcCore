@@ -21,22 +21,27 @@ tictactoe.currentUser = "X"
 
 ---@param e tes3uiEventData
 local function markTile(e)
-	if e.source.text ~= "" return end
-	e.source.text = tictactoe.currentUser 
+	if e.source.text ~= "" then return end
+	e.source.text = tictactoe.currentUser
 	tictactoe.currentUser = tictactoe.currentUser == "X" and "O" or "X"
 end
+
+---@return mobilePhone.tictactoe.currentUser winner
+local function getWinner() return "X" end
+
+local function checkStatus() local winner = getWinner() end
 
 local function createGameBoard(mainRect)
 	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
 	gameBoard.flowDirection = tes3.flowDirection.topToBottom
 	for i = 1, 3 do
-		local row = gameBoard:createBlock({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard"..i)})
+		local row = gameBoard:createBlock({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard" .. i) })
 		row.flowDirection = tes3.flowDirection.leftToRight
 		for j = 1, 3 do
-			local gameBoardTile = row:createButton({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard"..i..j )}
+			local gameBoardTile = row:createButton({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard" .. i .. j) })
 			gameBoardTile.borderAllSides = 10
 			gameBoardTile:register("mouseClick", markTile)
-			gameBoardTile:register("mouseClick", checkStatus)		
+			gameBoardTile:register("mouseClick", checkStatus)
 		end
 	end
 end

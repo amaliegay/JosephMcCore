@@ -1,6 +1,7 @@
 local config = require("JosephMcKean.mobilePhone.config")
 local log = require("JosephMcKean.lib.logging").createLogger(config, "main")
 local ui = require("JosephMcKean.lib.ui")
+local timers = require("JosephMcKean.lib.timer").timers
 
 ---@class mobilePhone.uiids
 local uiids = {
@@ -50,7 +51,7 @@ local function createAppsIcon(homeScreen)
 	local apps = loadApps()
 	for name, app in pairs(apps) do
 		local appIcon = homeScreen:createImage({ id = app.icon.uiid, path = app.icon.path })
-		appIcon.borderAllSides = 10
+		appIcon.borderAllSides = 9
 		appIcon:register("mouseClick", function(e)
 			homeScreen.visible = false
 			app.launch(homeScreen.parent)
@@ -60,96 +61,77 @@ local function createAppsIcon(homeScreen)
 end
 
 local function getTime()
-    local timestamp = tes3.getSimulationTimestamp() * 3600
-    if config.clock.twentyHourHourTime then
-        return os.date("!%H:%M", timestamp)
-    else
-        local dateTable = os.date("!*t", timestamp)
-        local hourInTwelveHour = dateTable.hour
-        if hourInTwelveHour > 12 then
-            hourInTwelveHour = hourInTwelveHour - 12
-        end
+	local timestamp = tes3.getSimulationTimestamp() * 3600
+	if config.clock.twentyHourHourTime then
+		return os.date("!%H:%M", timestamp)
+	else
+		local dateTable = os.date("!*t", timestamp)
+		local hourInTwelveHour = dateTable.hour
+		if hourInTwelveHour > 12 then hourInTwelveHour = hourInTwelveHour - 12 end
 
-        local dayPeriod = ""
+		local dayPeriod = ""
 		if config.clock.dayPeriod then
-        	if dateTable.hour < 12 then
-            	dayPeriod = " AM"
-        	else
-            	dayPeriod = " PM"
-        	end
+			if dateTable.hour < 12 then
+				dayPeriod = " AM"
+			else
+				dayPeriod = " PM"
+			end
 		end
-        return string.format("%u:%02u%s", hourInTwelveHour, dateTable.min, dayPeriod)
-    end
+		return string.format("%u:%02u%s", hourInTwelveHour, dateTable.min, dayPeriod)
+	end
 end
 
 ---@param clockLabel tes3uiElement
-local function updateClockUI(clockLabel)
-    if clockLabel then
-        clockLabel.text = getTime()
-    end
-end
+local function updateClockUI(clockLabel) if clockLabel then clockLabel.text = getTime() end end
 
-local function startClockTimers()
-    for _, clock in pairs(clocksTable) do
-        if clock.timer and timer.state ~= timer.expired then
-            clock.timer:cancel()
-        end
-    end
-
-    clocksTable.gameClock.timer = timer.start{
-        type     = timer.game,
-        duration = 1.0 / 60.0,
-        callback = function()
-                updateClockUI(clocksTable.gameClock)
-            end,
-        iterations = -1
-    }
-
-    clocksTable.realClock.timer = timer.start{
-        type     = timer.real,
-        duration = 60,
-        callback = function()
-                updateClockUI(clocksTable.realClock)
-            end,
-        iterations = -1
-    }
-
-    for _, clock in pairs(clocksTable) do
-        if not clock.isVisible() then
-            clock.timer:pause()
-        end
-    end
+---@param clockLabel tes3uiElement
+local function startClockTimer(clockLabel)
+	local clockTimer = timers["mobilePhone"]
+	if clockTimer and clockTimer.state ~= timer.expired then clockTimer:cancel() end
+	clockTimer = timer.start({ type = timer.game, duration = 1 / 60, callback = function() updateClockUI(clockLabel) end, iterations = -1 })
 end
 
 ---@param statusBar tes3uiElement
 local function createClock(statusBar)
-    local clockLabel = statusBar:createLabel({ id = uiids.clockLabel })
-    clockLabel.autoWidth, clocksBlock.autoHeight = true, true
-    clockLabel.widthProportional = 1
+	local clockLabel = statusBar:createLabel({ id = uiids.clockLabel })
+	clockLabel.autoWidth, clockLabel.autoHeight = true, true
+	clockLabel.widthProportional = 1
 	clockLabel.absolutePosAlignX = 0.5
-    clockLabel.color = config.clock.color
+	clockLabel.color = config.clock.color
+	clockLabel.font = 1
 	updateClockUI(clockLabel)
-	event.register("loaded", startClockTimers)
+	event.register("loaded", function() startClockTimer(clockLabel) end)
 end
 
 ---@param display tes3uiElement
 local function createStatusBar(display)
-	local statusBar = display:createBlock({ id = uiid.statusBar })
+	local statusBar = display:createBlock({ id = uiids.statusBar })
+	statusBar.autoHeight = true
+	statusBar.widthProportional = 1
+	statusBar.borderTop = 4
 	createClock(statusBar)
+end
+
+---@param display tes3uiElement
+local function createHomeScreen(display)
+	local homeScreen = display:createBlock({ id = uiids.homeScreen })
+	homeScreen.autoWidth, homeScreen.autoHeight = true, true
+	createAppsIcon(homeScreen)
 end
 
 local function createDisplay(screen)
 	local display = screen:createThinBorder({ id = uiids.display })
 	display.width, display.height = config.display.width, config.display.height
 	display.absolutePosAlignX, display.absolutePosAlignY = 0.5, 0.55
+	display.flowDirection = tes3.flowDirection.topToBottom
 	createStatusBar(display)
-	createAppsIcon(display)
+	createHomeScreen(display)
 end
 
 ---@param menu tes3uiElement
 local function createDevice(menu)
 	local device = menu:createThinBorder({ id = uiids.device })
-	device.parent.paddingAllSides = 5
+	device.parent.paddingAllSides = 4
 	device.autoWidth, device.autoHeight = true, true
 	--- screen
 	local screen = device:createRect({ id = uiids.screen, color = tes3vector3.new(0, 0, 0) })

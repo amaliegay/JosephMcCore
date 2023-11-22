@@ -10,3 +10,8 @@
 ---@class JosephMcKean.lib.size
 ---@field width integer
 ---@field height integer
+--
+---@class JosephMcKean.lib.rgb
+---@field r number
+---@field g number
+---@field b number
