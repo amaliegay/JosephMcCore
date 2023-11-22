@@ -78,7 +78,7 @@ local function getTime()
             	dayPeriod = " PM"
         	end
 		end
-        return string.format("%u:%02u %s", hourInTwelveHour, dateTable.min, dayPeriod)
+        return string.format("%u:%02u%s", hourInTwelveHour, dateTable.min, dayPeriod)
     end
 end
 
