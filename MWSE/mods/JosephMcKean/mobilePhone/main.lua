@@ -16,6 +16,7 @@ local uiids = {
 	volumeUpButton = tes3ui.registerID("MenuMobilePhone_volumeUpButton"),
 	volumeDownButton = tes3ui.registerID("MenuMobilePhone_volumeDownButton"),
 	sideButton = tes3ui.registerID("MenuMobilePhone_sideButton"),
+	statusBar = tes3ui.registerID("MenuMobilePhone_statusBar"),
 }
 
 ---@class mobilePhone.app
@@ -57,7 +58,8 @@ local function createAppsIcon(homeScreen)
 	end
 end
 
-local function createClock(e)
+---@param statusBar tes3uiElement
+local function createClock(statusBar)
     local menuMapBlock  = e.element:findChild(tes3ui.registerID("MenuMap_panel"))
     local startingBlock = menuMapBlock.parent
 
@@ -107,10 +109,17 @@ local function createClock(e)
     startingBlock:getTopLevelMenu():updateLayout()
 end
 
+---@param display tes3uiElement
+local function createStatusBar(display)
+	local statusBar = display:createBlock({ id = uiid.statusBar })
+	createClock(statusBar)
+end
+
 local function createDisplay(screen)
 	local display = screen:createThinBorder({ id = uiids.display })
 	display.width, display.height = config.display.width, config.display.height
 	display.absolutePosAlignX, display.absolutePosAlignY = 0.5, 0.55
+	createStatusBar(display)
 	createAppsIcon(display)
 end
 
