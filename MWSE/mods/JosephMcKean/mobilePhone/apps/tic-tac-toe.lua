@@ -71,7 +71,6 @@ local function updateInterface(winner)
     else
         tictactoe.statusDisplay.text = winner .. " has won the game."
 		resetButton.text = "Play again?"
-        toggleTiles(true);
 	end
 end
 
