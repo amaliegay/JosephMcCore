@@ -18,6 +18,7 @@ tictactoe.icon = { uiid = uiids.appIcon, path = "Textures\\jsmk\\mb\\ttt\\icon.d
 ---|'"X"'
 ---|'"O"'
 tictactoe.currentUser = "X"
+tictactoe.isPlayersTurnText = { ["X"] = "It's your turn.", ["O"] = "It's your opponent's turn." }
 
 ---@param e tes3uiEventData
 local function markTile(e)
@@ -105,7 +106,7 @@ local function resetGame(e)
 	for i, gameBoardTile in ipairs(tictactoe.gameBoardTiles) do
 		gameBoardTile.text = "" 
 	end
-    tictactoe.statusDisplay.text = "It's X's starting turn."
+    tictactoe.statusDisplay.text = tictactoe.isPlayersTurnText[tictactoe.currentUser]
     tictactoe.currentUser = "X"
     tictactoe.resetButton.text = "Restart?"
 end
@@ -122,7 +123,8 @@ local function createMenu(menu)
 	mainRect.width, mainRect.height = config.display.width, config.display.height
 	local title = mainRect:createLabel({ id = uiids.title, text = "Tic Tac Toe" })
 	title.justifyText = "center"
-	local statusDisplay = mainRect:createLabel({ id = uiids.statusDisplay, text = "It's X's turn." })
+	tictactoe.currentUser = math.random() < 0.5 and "X" or "O"
+	local statusDisplay = mainRect:createLabel({ id = uiids.statusDisplay, text = tictactoe.isPlayersTurnText[tictactoe.currentUser] })
 	statusDisplay.justifyText = "center"
 	tictactoe.statusDisplay = statusDisplay
 	createGameBoard(mainRect)
