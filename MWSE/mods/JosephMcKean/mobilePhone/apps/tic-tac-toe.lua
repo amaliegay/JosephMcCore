@@ -63,7 +63,14 @@ local function getWinner()
     return
 end
 
-local function checkStatus() local winner = getWinner() end
+local function checkStatus() 
+	local winner = getWinner() 
+	if winner then
+        updateInterface(winner)
+    else
+		tictactoe.statusDisplay.text = "It's " .. tictactoe.currentUser .. "'s turn."
+	end
+end
 
 local function createGameBoard(mainRect)
 	local gameBoard = mainRect:createBlock({ id = uiids.gameBoard })
@@ -89,6 +96,7 @@ local function createMenu(menu)
 	title.justifyText = "center"
 	local statusDisplay = mainRect:createLabel({ id = uiids.statusDisplay, text = "It's X's turn." })
 	statusDisplay.justifyText = "center"
+	tictactoe.statusDisplay = statusDisplay
 	createGameBoard(mainRect)
 	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
 end
