@@ -99,6 +99,23 @@ local function createGameBoard(mainRect)
 	end
 end
 
+-- Clear all tiles, resets statusDisplay, currentUser, and text of resetButton.
+---@param e tes3uiEventData
+local function resetGame(e)
+	for i, gameBoardTile in ipairs(tictactoe.gameBoardTiles) do
+		gameBoardTile.text = "" 
+	end
+    tictactoe.statusDisplay.text = "It's X's starting turn."
+    tictactoe.currentUser = "X"
+    tictactoe.resetButton.text = "Restart?"
+end
+
+local function createResetButton(mainRect)
+	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
+	resetButton:register("mouseClick", resetGame)
+	tictactoe.resetButton = resetButton
+end
+
 ---@param menu tes3uiElement
 local function createMenu(menu)
 	local mainRect = menu:createRect({ id = uiids.mainRect })
@@ -109,7 +126,7 @@ local function createMenu(menu)
 	statusDisplay.justifyText = "center"
 	tictactoe.statusDisplay = statusDisplay
 	createGameBoard(mainRect)
-	local resetButton = mainRect:createButton({ id = uiids.resetButton, text = "Restart?" })
+	createResetButton(mainRect)
 end
 
 tictactoe.uiids = uiids
