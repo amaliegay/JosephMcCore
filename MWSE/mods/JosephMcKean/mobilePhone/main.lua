@@ -97,7 +97,6 @@ local function createClock(statusBar)
 	clockLabel.autoWidth, clockLabel.autoHeight = true, true
 	clockLabel.widthProportional = 1
 	clockLabel.absolutePosAlignX = 0.5
-	clockLabel.color = config.clock.color
 	clockLabel.font = 1
 	updateClockUI(clockLabel)
 	event.register("loaded", function() startClockTimer(clockLabel) end)

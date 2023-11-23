@@ -92,9 +92,8 @@ local numpadButtons = {
 ---@param data mobilePhone.numpadButton.data
 local function createButton(numpad, data)
 	local button = numpad:createButton({ id = tes3ui.registerID("MenuMobilePhone_Calculator_numpad" .. data.id), text = data.id })
-	button.height = 72
-	button.widthProportional = data.widthProportional or 1
-	button.autoHeight = false
+	button.autoWidth, button.autoHeight = false, false
+	button.width, button.height = 52, 62
 	button:register("mouseClick", function(e)
 		if data.click then data.click(data.id) end
 		updateDisplay()
@@ -141,7 +140,8 @@ end
 ---@param menu tes3uiElement
 local function createMenu(menu)
 	local mainRect = menu:createRect({ id = uiids.mainRect })
-	mainRect.width, mainRect.height = config.display.width, config.display.height
+	mainRect.widthProportional, mainRect.heightProportional = 1, 1
+	mainRect.borderAllSides = 4
 	local mainBlock = mainRect:createBlock({ id = uiids.mainBlock })
 	mainBlock.absolutePosAlignY = 1
 	mainBlock.width = mainRect.width

@@ -34,63 +34,50 @@ tictactoe.gameBoardTiles = {} ---@type tes3uiElement[]
 ---|'"D"'
 
 ---@return mobilePhone.tictactoe.result? winner
-local function getWinner() 
+local function getWinner()
 	-- part I: check for a winning line 
-    local lines = {
-      {0, 1, 2},
-      {3, 4, 5},
-      {6, 7, 8},
-      {0, 3, 6},
-      {1, 4, 7},
-      {2, 5, 8},
-      {0, 4, 8},
-      {2, 4, 6}
-	}
+	local lines = { { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }, { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 }, { 0, 4, 8 }, { 2, 4, 6 } }
 	for i = 1, #lines do
-      	local a, b, c = table.unpack(lines[i])
+		local a, b, c = table.unpack(lines[i])
 		local gameBoardTiles = tictactoe.gameBoardTiles
-      	if gameBoardTiles[a].text and gameBoardTiles[a] 
-				.text == gameBoardTiles[b].text and gameBoardTiles[a].text == gameBoardTiles[c].text then
-        	return gameBoardTiles[a]
-		end
+		if gameBoardTiles[a].text and gameBoardTiles[a].text == gameBoardTiles[b].text and gameBoardTiles[a].text == gameBoardTiles[c].text then return gameBoardTiles[a].text end
 	end
 	-- part II: check if the board is full
-    for i, gameBoardTile in ipairs(tictactoe.gameBoardTiles) do
-		if gameBoardTile.text == "X" or gameBoardTile.text == "O" then
-      		return "D"
-		end
-	end
-    return
+	for i, gameBoardTile in ipairs(tictactoe.gameBoardTiles) do if gameBoardTile.text == "X" or gameBoardTile.text == "O" then return "D" end end
+	return
 end
 
+-- Updates the winner display text, reset button, and tiles
 ---@param result mobilePhone.tictactoe.result
 local function endGame(result)
-	-- Updates the winner display text, reset button, and tiles
-    if winner == "D" then
-        tictactoe.statusDisplay.text = "It's a draw!";
-    else
-        tictactoe.statusDisplay.text = winner .. " has won the game."
+	local winner
+	if winner == "D" then
+		tictactoe.statusDisplay.text = "It's a draw!";
+	else
+		tictactoe.statusDisplay.text = winner .. " has won the game."
 	end
-	resetButton.text = "Play again?"
+	tictactoe.resetButton.text = "Play again?"
 end
 
-local function checkStatus() 
-	local winner = getWinner() 
+local function checkStatus()
+	local winner = getWinner()
 	if winner then
 		endGame(winner)
 		return true
 	end
 end
 
+local function makeMove() end
+
 local function beginOpponentsTurn()
 	local result = makeMove()
-	if result then 
+	if result then
 		local isGameOver = checkStatus()
-		if not isGameOver then switchTurn() end 
+		if not isGameOver then tictactoe.switchTurn() end
 	end
 end
 
-local function switchTurn()
+function tictactoe.switchTurn()
 	tictactoe.currentUser = tictactoe.currentUser == "X" and "O" or "X"
 	tictactoe.statusDisplay.text = "It's " .. tictactoe.currentUser .. "'s turn."
 	if tictactoe.currentUser == "O" then beginOpponentsTurn() end
@@ -101,7 +88,7 @@ local function select(e)
 	if tictactoe.currentUser == "X" then
 		markTile(e)
 		local isGameOver = checkStatus()
-		if not isGameOver then switchTurn() end
+		if not isGameOver then tictactoe.switchTurn() end
 	end
 end
 
@@ -113,7 +100,7 @@ local function createGameBoard(mainRect)
 		row.flowDirection = tes3.flowDirection.leftToRight
 		for j = 1, 3 do
 			local gameBoardTile = row:createButton({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard" .. i .. j) })
-			tictactoe.gameBoardTiles[3i+j-3] = gameBoardTile
+			tictactoe.gameBoardTiles[3 * i + j - 3] = gameBoardTile
 			gameBoardTile.borderAllSides = 10
 			gameBoardTile:register("mouseClick", select)
 		end
@@ -123,12 +110,10 @@ end
 -- Clear all tiles, resets statusDisplay, currentUser, and text of resetButton.
 ---@param e tes3uiEventData
 local function resetGame(e)
-	for i, gameBoardTile in ipairs(tictactoe.gameBoardTiles) do
-		gameBoardTile.text = "" 
-	end
-    tictactoe.statusDisplay.text = tictactoe.isPlayersTurnText[tictactoe.currentUser]
-    tictactoe.currentUser = "X"
-    tictactoe.resetButton.text = "Restart?"
+	for i, gameBoardTile in ipairs(tictactoe.gameBoardTiles) do gameBoardTile.text = "" end
+	tictactoe.statusDisplay.text = tictactoe.isPlayersTurnText[tictactoe.currentUser]
+	tictactoe.currentUser = "X"
+	tictactoe.resetButton.text = "Restart?"
 end
 
 local function createResetButton(mainRect)
