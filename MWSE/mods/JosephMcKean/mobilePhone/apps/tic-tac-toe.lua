@@ -24,7 +24,6 @@ tictactoe.isPlayersTurnText = { ["X"] = "It's your turn.", ["O"] = "It's your op
 local function markTile(e)
 	if e.source.text ~= "" then return end
 	e.source.text = tictactoe.currentUser
-	tictactoe.currentUser = tictactoe.currentUser == "X" and "O" or "X"
 end
 
 tictactoe.gameBoardTiles = {} ---@type tes3uiElement[]
@@ -64,23 +63,36 @@ local function getWinner()
     return
 end
 
----@param winner mobilePhone.tictactoe.result
-local function updateInterface(winner)
+---@param result mobilePhone.tictactoe.result
+local function endGame(result)
 	-- Updates the winner display text, reset button, and tiles
     if winner == "D" then
         tictactoe.statusDisplay.text = "It's a draw!";
     else
         tictactoe.statusDisplay.text = winner .. " has won the game."
-		resetButton.text = "Play again?"
 	end
+	resetButton.text = "Play again?"
 end
 
 local function checkStatus() 
 	local winner = getWinner() 
 	if winner then
-        updateInterface(winner)
-    else
-		tictactoe.statusDisplay.text = "It's " .. tictactoe.currentUser .. "'s turn."
+		endGame(winner)
+		return true
+	end
+end
+
+local function switchTurn()
+	tictactoe.currentUser = tictactoe.currentUser == "X" and "O" or "X"
+	tictactoe.statusDisplay.text = "It's " .. tictactoe.currentUser .. "'s turn."
+end
+
+---@param e tes3uiEventData
+local function select(e)
+	if tictactoe.currentUser == "X" then
+		markTile(e)
+		local isGameOver = checkStatus()
+		if not isGameOver then switchTurn() end
 	end
 end
 
@@ -94,8 +106,7 @@ local function createGameBoard(mainRect)
 			local gameBoardTile = row:createButton({ id = tes3ui.registerID("MenuMobilePhone_TicTacToe_gameBoard" .. i .. j) })
 			tictactoe.gameBoardTiles[3i+j-3] = gameBoardTile
 			gameBoardTile.borderAllSides = 10
-			gameBoardTile:register("mouseClick", markTile)
-			gameBoardTile:register("mouseClick", checkStatus)
+			gameBoardTile:register("mouseClick", select)
 		end
 	end
 end
