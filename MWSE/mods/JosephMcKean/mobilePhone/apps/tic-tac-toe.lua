@@ -82,9 +82,18 @@ local function checkStatus()
 	end
 end
 
+local function beginOpponentsTurn()
+	local result = makeMove()
+	if result then 
+		local isGameOver = checkStatus()
+		if not isGameOver then switchTurn() end 
+	end
+end
+
 local function switchTurn()
 	tictactoe.currentUser = tictactoe.currentUser == "X" and "O" or "X"
 	tictactoe.statusDisplay.text = "It's " .. tictactoe.currentUser .. "'s turn."
+	if tictactoe.currentUser == "O" then beginOpponentsTurn() end
 end
 
 ---@param e tes3uiEventData
