@@ -8,4 +8,7 @@ function Mod:new()
 	return mod
 end
 
+function Mod:log(serviceName)
+end
+
 return Mod
