@@ -1,9 +1,12 @@
 local logging = require("JosephMcKean.lib.logging")
 
+local Mod = {}
+
 ---@return JosephMcCore.mod
-local function Mod()
+function Mod:new()
 	local mod = {} ---@type JosephMcCore.mod
-	mod.log = logging.log(mod)
+	setmetatable(mod, self)
+	self.__index = self
 	return mod
 end
 
