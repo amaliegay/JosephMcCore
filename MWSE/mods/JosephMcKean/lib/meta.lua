@@ -1,17 +1,14 @@
----@class JosephMcKean.lib.mod
----@field name string
---
----@class JosephMcKean.lib.keybind
+---@class JosephMcCore.keybind
 ---@field keyCode integer
 ---@field isShiftDown boolean
 ---@field isAltDown boolean
 ---@field isControlDown boolean
 --
----@class JosephMcKean.lib.size
+---@class JosephMcCore.size
 ---@field width integer
 ---@field height integer
 --
----@class JosephMcKean.lib.rgb
+---@class JosephMcCore.rgb
 ---@field r number
 ---@field g number
 ---@field b number

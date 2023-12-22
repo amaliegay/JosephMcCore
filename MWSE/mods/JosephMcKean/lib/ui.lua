@@ -18,8 +18,8 @@ local function isTextInputIsActive()
 	return false
 end
 
----@param actualKey JosephMcKean.lib.keybind
----@param expectedKey JosephMcKean.lib.keybind
+---@param actualKey JosephMcCore.keybind
+---@param expectedKey JosephMcCore.keybind
 ---@param uiid integer
 ---@param createMenu function
 function ui.keyDownUIToggle(actualKey, expectedKey, uiid, createMenu)
