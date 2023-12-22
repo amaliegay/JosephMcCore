@@ -1,11 +1,11 @@
 [package]
-name = "Mobile Phone"
+name = "JosephMcCore"
 authors = ["JosephMcKean"]
 version = "1.0.0"
 
 [dependencies]
 assets = [
-    "MWSE/mods/JosephMcKean/mobilePhone",
+    "MWSE/mods/JosephMcKean/lib",
 ]
 
 [dependencies.mwse]
