@@ -8,5 +8,5 @@ Requires MWSE-Lua.
 Install the latest version of MWSE.
 Download this mod and install it with a mod manager like MO2 or Wrye Mash.
 
-# Usage
+## Usage
 It does nothing by itself.
