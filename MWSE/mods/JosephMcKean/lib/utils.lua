@@ -32,11 +32,29 @@ local function iterateInventory(reference)
 	return coroutine.wrap(iterator)
 end
 
+--- This is a generic iterator function used
+--- to loop over a tes3referenceList
+---@param list tes3referenceList
+---@return fun(): tes3reference
+local function iterateReferenceList(list)
+	local function iterator()
+		local ref = list.head
+
+		if list.size ~= 0 then coroutine.yield(ref) end
+
+		while ref.nextNode do
+			ref = ref.nextNode
+			coroutine.yield(ref)
+		end
+	end
+	return coroutine.wrap(iterator)
+end
+
 local function isLuaFile(file) return file:sub(-4, -1) == ".lua" end
 
 ---@param path string
 local function executeAllLuaFilesIn(path) for filename in lfs.dir(path) do if isLuaFile(filename) then dofile(path .. filename) end end end
 
-local utils = { iterateInventory = iterateInventory, executeAllLuaFilesIn = executeAllLuaFilesIn }
+local utils = { iterateInventory = iterateInventory, iterateReferenceList = iterateReferenceList, executeAllLuaFilesIn = executeAllLuaFilesIn }
 
 return utils
